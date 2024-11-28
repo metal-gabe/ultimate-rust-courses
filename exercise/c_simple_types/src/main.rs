@@ -38,7 +38,7 @@ fn main() {
     // - Make a library file (src/lib.rs)
     // - Move all the functions (except main) into the library
     // - Make all the functions public with `pub`
-    // - Bring all the functions into scope using use statements. Remember, the name of the library
+    // - Bring all the functions into scope using "use" statements. Remember, the name of the library
     //   is defined in Cargo.toml.  You'll need to know that to `use` it.
     //
     // `cargo run` should produce the same output, only now the code is more organized. 🎉
