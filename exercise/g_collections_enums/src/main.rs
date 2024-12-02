@@ -1,11 +1,13 @@
 // Silence some warnings that could distract from the exercise
 #![allow(unused_variables, unused_mut, dead_code)]
 
+use g_collections_enums::{get_arrow_coords, Coord};
+
 // Someone is shooting arrows at a target.  We need to classify the shots.
 //
 // 1a. Create an enum called `Shot` with variants:
 // - `Bullseye`
-// - `Hit`, containing the distance from the center (an f64)
+// - `Hit`, containing the distance from the center (a f64)
 // - `Miss`
 //
 // You will need to complete 1b as well before you will be able to run this program successfully.
@@ -49,9 +51,9 @@ fn main() {
         coord.print_description();
 
         let shot = match coord.distance_from_center() {
-          x if x < 1.0 => Shot::Bullseye,
-          x if x < 5.0 => Shot::Hit(x),
-          _ => Shot::Miss,
+            x if x < 1.0 => Shot::Bullseye,
+            x if x < 5.0 => Shot::Hit(x),
+            _ => Shot::Miss,
         };
 
         shots.push(shot);
@@ -66,41 +68,4 @@ fn main() {
     }
 
     println!("Final point total is: {total}");
-}
-
-// A coordinate of where an Arrow hit
-#[derive(Debug)]
-struct Coord {
-    x: f64,
-    y: f64,
-}
-
-impl Coord {
-    fn distance_from_center(&self) -> f64 {
-        (self.x.powf(2.0) + self.y.powf(2.0)).sqrt()
-    }
-
-    fn print_description(&self) {
-        println!(
-            "coord is {:.1} away, at ({:.1}, {:.1})",
-            self.distance_from_center(),
-            self.x,
-            self.y
-        );
-    }
-}
-
-// Generate some random coordinates
-fn get_arrow_coords(num: u32) -> Vec<Coord> {
-    let mut coords: Vec<Coord> = Vec::new();
-
-    for _ in 0..num {
-        let coord = Coord {
-            x: (rand::random::<f64>() - 0.5) * 12.0,
-            y: (rand::random::<f64>() - 0.5) * 12.0,
-        };
-        coords.push(coord);
-    }
-
-    coords
 }
