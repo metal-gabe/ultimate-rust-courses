@@ -74,7 +74,7 @@ fn main() {
             if args.len() != 1 {
                 print_usage_and_exit();
             }
-          
+
             let outfile = args.remove(0);
             fractal(outfile);
         }
