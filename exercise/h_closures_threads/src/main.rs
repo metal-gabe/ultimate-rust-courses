@@ -2,6 +2,7 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 use crossbeam::channel;
 use std::thread;
+// use tokio::sync::broadcast;
 
 use h_closures_threads::{expensive_sum, pause_ms};
 
@@ -80,31 +81,37 @@ fn main() {
     // the child threads.
 
     /* ========================================================================== */
-    // NOTE :: trying to "receive" the same message in both child threads does not work this way
+    // NOTE :: trying to use one transmitter (sending to one receiver & its clone)
+    // NOTE :: to get the same message in both child threads does not work
     // see this GPT link for more info: https://chatgpt.com/share/674d3f5e-a4a4-8006-b7f8-8daf9e74f755
-    // the answer is to use two separate channels for each child thread
-    // or to use the `tokio` crate and its `broadcast` module -- I LIKE THIS OPTION BEST!!!
+    //
+    // the answer is to use separate channels for each child thread (implemented below)
+    //
+    // there was a mention of trying to use the `tokio` crate and its `broadcast` module (I do like this option)
+    // but `tokio` is an async/await operation and causes issues when used in child threads
     /* ========================================================================== */
-    let (bllr_tx, bllr_rx) = channel::unbounded();
-    let bllr_rx2 = bllr_rx.clone();
+    let (tx_c, rx_c) = channel::unbounded();
+    let (tx_d, rx_d) = channel::unbounded();
 
     let handle_c = thread::spawn(move || {
-        for msg in bllr_rx {
+        for msg in rx_c {
             println!("Thread C: Received {msg}");
         }
     });
 
     let handle_d = thread::spawn(move || {
-        for msg in bllr_rx2 {
+        for msg in rx_d {
             println!("Thread D: Received {msg}");
         }
     });
 
     for msg in vec!["bllr-a", "bllr-b", "bllr-c", "bllr-d", "bllr-e", "bllr-f"] {
-        bllr_tx.send(msg).unwrap();
+        tx_c.send(msg).unwrap();
+        tx_d.send(msg).unwrap();
     }
 
-    drop(bllr_tx);
+    drop(tx_c);
+    drop(tx_d);
     handle_c.join().unwrap();
     handle_d.join().unwrap();
     println!("Main thread: Exiting.")
