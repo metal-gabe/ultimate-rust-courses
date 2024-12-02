@@ -45,9 +45,9 @@ fn main() {
     let tx2 = tx.clone();
 
     let handle_a = thread::spawn(move || {
-        pause_ms(350);
+        pause_ms(400);
         tx2.send("Thread A: 1").unwrap();
-        pause_ms(375);
+        pause_ms(200);
         tx2.send("Thread A: 2").unwrap();
     });
 
