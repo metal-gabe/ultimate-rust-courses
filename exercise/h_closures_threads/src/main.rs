@@ -78,6 +78,13 @@ fn main() {
     // On the child threads print out the values you receive. Close the sending side in the main
     // thread by calling `drop(tx)` (assuming you named your sender channel variable `tx`).  Join
     // the child threads.
+
+    /* ========================================================================== */
+    // NOTE :: trying to "receive" the same message in both child threads does not work this way
+    // see this GPT link for more info: https://chatgpt.com/share/674d3f5e-a4a4-8006-b7f8-8daf9e74f755
+    // the answer is to use two separate channels for each child thread
+    // or to use the `tokio` crate and its `broadcast` module -- I LIKE THIS OPTION BEST!!!
+    /* ========================================================================== */
     let (bllr_tx, bllr_rx) = channel::unbounded();
     let bllr_rx2 = bllr_rx.clone();
 
