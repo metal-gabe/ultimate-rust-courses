@@ -5,6 +5,7 @@ name = "invaders"
 version = "0.1.0"
 
 [dependencies]
+crossbeam = "0.8.2"
 crossterm = "0.28.1"
 rusty_audio = "1.4.1"
 rusty_time = "1.1.0"
