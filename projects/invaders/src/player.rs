@@ -25,7 +25,7 @@ pub struct Player {
 }
 
 /* ========================================================================== */
-// DEFINING THE `PLAYER` FILE
+// DEFINING THE `PLAYER` MODULE
 /* ========================================================================== */
 impl Player {
    pub fn new() -> Player {

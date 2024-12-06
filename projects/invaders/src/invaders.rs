@@ -3,8 +3,8 @@
 /* ========================================================================== */
 // Rust
 // Project
-use crate::{NUM_COLS, NUM_ROWS};
 // Packages
+use rusty_time::Timer;
 // Context / Stores / Routers
 // Components / Classes / Controllers / Services
 // Assets / Constants
@@ -13,32 +13,18 @@ use crate::{NUM_COLS, NUM_ROWS};
 // Styles
 
 /* ========================================================================== */
-// HELPERS, INTERFACES & VARS
+// HELPERS, INTERFACES, VARS & SET UP
 /* ========================================================================== */
-pub type Frame = Vec<Vec<&'static str>>;
+pub struct Invader {
+   pub x: usize,
+   pub y: usize,
+}
 
-pub trait Drawable {
-   fn draw(
-      &self,
-      frame: &mut Frame,
-   );
+pub struct Invaders {
+   pub army: Vec<Invader>,
+   pub move_timer: Timer,
 }
 
 /* ========================================================================== */
-// DEFINING THE `FRAME` MODULE
+// DEFINING THE `INVADERS` MODULE
 /* ========================================================================== */
-pub fn new_frame() -> Frame {
-   let mut cols = Vec::with_capacity(NUM_COLS);
-
-   for _ in 0..NUM_COLS {
-      let mut col = Vec::with_capacity(NUM_ROWS);
-
-      for _ in 0..NUM_ROWS {
-         col.push(" ");
-      }
-
-      cols.push(col);
-   }
-
-   cols
-}

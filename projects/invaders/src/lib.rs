@@ -21,6 +21,7 @@ use rusty_audio::Audio;
 // HELPERS, INTERFACES & VARS
 /* ========================================================================== */
 pub mod frame;
+pub mod invaders;
 pub mod player;
 pub mod render;
 pub mod shot;
