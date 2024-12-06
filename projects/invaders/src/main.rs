@@ -3,7 +3,7 @@
 /* ========================================================================== */
 // Rust
 use std::error::Error;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use std::{io, thread};
 // Project
 use invaders::frame::{new_frame, Drawable};
@@ -53,15 +53,23 @@ fn main() -> Result<(), Box<dyn Error>> {
 
    // game loop
    let mut player = Player::new();
+   let mut instant = Instant::now();
 
    'gameloop: loop {
       // per-frame init
+      let delta = instant.elapsed();
+      instant = Instant::now();
       let mut curr_frame = new_frame();
 
       // handling input
       while event::poll(Duration::default())? {
          if let Event::Key(key) = event::read()? {
             match key.code {
+               KeyCode::Char(' ') | KeyCode::Enter => {
+                  if player.shoot() {
+                     audio.play("pew");
+                  }
+               },
                KeyCode::Esc | KeyCode::Char('q') => {
                   audio.play("lose");
                   break 'gameloop;
@@ -72,6 +80,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
          }
       }
+
+      // updates
+      player.update(delta);
 
       // draw & render
       player.draw(&mut curr_frame);

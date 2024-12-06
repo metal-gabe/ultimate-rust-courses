@@ -5,9 +5,8 @@
 use std::time::Duration;
 // Project
 use crate::frame::{Drawable, Frame};
-use crate::shot::Shot;
-use crate::{NUM_COLS, NUM_ROWS};
 // Packages
+use rusty_time::Timer;
 // Context / Stores / Routers
 // Components / Classes / Controllers / Services
 // Assets / Constants
@@ -18,43 +17,26 @@ use crate::{NUM_COLS, NUM_ROWS};
 /* ========================================================================== */
 // HELPERS, INTERFACES, VARS & SET UP
 /* ========================================================================== */
-pub struct Player {
-   x: usize,
-   y: usize,
-   shots: Vec<Shot>,
+pub struct Shot {
+   pub x: usize,
+   pub y: usize,
+   pub exploding: bool,
+   timer: Timer,
 }
 
 /* ========================================================================== */
-// DEFINING THE `PLAYER` FILE
+// DEFINING THE `SHOT` FILE
 /* ========================================================================== */
-impl Player {
-   pub fn new() -> Player {
-      Player {
-         x: NUM_COLS / 2,
-         y: NUM_ROWS - 1,
-         shots: Vec::new(),
-      }
-   }
-
-   pub fn move_left(&mut self) {
-      if self.x > 0 {
-         self.x -= 1;
-      }
-   }
-
-   pub fn move_right(&mut self) {
-      if self.x < NUM_COLS - 1 {
-         self.x += 1;
-      }
-   }
-
-   pub fn shoot(&mut self) -> bool {
-      if self.shots.len() < 3 {
-         let shot = Shot::new(self.x, self.y - 1);
-         self.shots.push(shot);
-         true
-      } else {
-         false
+impl Shot {
+   pub fn new(
+      x: usize,
+      y: usize,
+   ) -> Shot {
+      Self {
+         x,
+         y,
+         exploding: false,
+         timer: Timer::new(Duration::from_millis(50)),
       }
    }
 
@@ -62,23 +44,32 @@ impl Player {
       &mut self,
       delta: Duration,
    ) {
-      for shot in self.shots.iter_mut() {
-         shot.update(delta);
-      }
+      self.timer.tick(delta);
 
-      self.shots.retain(|s| !s.dead());
+      if self.timer.finished() && !self.exploding {
+         if self.y > 0 {
+            self.y -= 1;
+         }
+
+         self.timer.reset();
+      }
+   }
+
+   pub fn explode(&mut self) {
+      self.exploding = true;
+      self.timer = Timer::new(Duration::from_millis(250));
+   }
+
+   pub fn dead(&self) -> bool {
+      (self.exploding && self.timer.finished()) || self.y == 0
    }
 }
 
-impl Drawable for Player {
+impl Drawable for Shot {
    fn draw(
       &self,
       frame: &mut Frame,
    ) {
-      frame[self.x][self.y] = "A";
-
-      for shot in self.shots.iter() {
-         shot.draw(frame);
-      }
+      frame[self.x][self.y] = if self.exploding { "*" } else { "|" };
    }
 }
