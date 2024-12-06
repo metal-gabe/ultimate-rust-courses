@@ -6,7 +6,8 @@ use std::error::Error;
 use std::time::Duration;
 use std::{io, thread};
 // Project
-use invaders::frame::new_frame;
+use invaders::frame::{new_frame, Drawable};
+use invaders::player::Player;
 use invaders::render::render;
 use invaders::{exit_terminal, init_audio, init_terminal};
 // Packages
@@ -51,9 +52,11 @@ fn main() -> Result<(), Box<dyn Error>> {
    });
 
    // game loop
+   let mut player = Player::new();
+
    'gameloop: loop {
       // per-frame init
-      let curr_frame = new_frame();
+      let mut curr_frame = new_frame();
 
       // handling input
       while event::poll(Duration::default())? {
@@ -63,12 +66,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                   audio.play("lose");
                   break 'gameloop;
                },
+               KeyCode::Left => player.move_left(),
+               KeyCode::Right => player.move_right(),
                _ => (),
             }
          }
       }
 
       // draw & render
+      player.draw(&mut curr_frame);
       // the return value of this `.send` could be a `Result` or an `Error`
       // by storing it this way, we're effectively silently ignoring whatever happens
       let _ = render_tx.send(curr_frame);
