@@ -5,6 +5,7 @@
 use std::time::Duration;
 // Project
 use crate::frame::{Drawable, Frame};
+use crate::invaders::Invaders;
 use crate::shot::Shot;
 use crate::{NUM_COLS, NUM_ROWS};
 // Packages
@@ -67,6 +68,24 @@ impl Player {
       }
 
       self.shots.retain(|s| !s.dead());
+   }
+
+   pub fn detect_hits(
+      &mut self,
+      invaders: &mut Invaders,
+   ) -> bool {
+      let mut is_something_hit = false;
+
+      for shot in self.shots.iter_mut() {
+         if !shot.exploding {
+            if invaders.kill_invader_at(shot.x, shot.y) {
+               is_something_hit = true;
+               shot.explode();
+            }
+         }
+      }
+
+      is_something_hit
    }
 }
 

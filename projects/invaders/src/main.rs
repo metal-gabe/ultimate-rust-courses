@@ -91,6 +91,10 @@ fn main() -> Result<(), Box<dyn Error>> {
          audio.play("move");
       }
 
+      if player.detect_hits(&mut invaders) {
+         audio.play("explode");
+      }
+
       // draw & render
       // =====[ v1 of rendering our models ]=====
       // invaders.draw(&mut curr_frame);
@@ -106,6 +110,17 @@ fn main() -> Result<(), Box<dyn Error>> {
       let _ = render_tx.send(curr_frame);
       // an artificial delay to let the render loop keep up with the game loop
       thread::sleep(Duration::from_millis(1));
+
+      // win or lose?
+      if invaders.is_all_killed() {
+         audio.play("win");
+         break 'gameloop;
+      }
+
+      if invaders.is_bottom_reached() {
+         audio.play("lose");
+         break 'gameloop;
+      }
    }
 
    // cleanup
