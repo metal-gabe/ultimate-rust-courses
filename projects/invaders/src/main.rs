@@ -7,6 +7,7 @@ use std::time::{Duration, Instant};
 use std::{io, thread};
 // Project
 use invaders::frame::{new_frame, Drawable};
+use invaders::invaders::Invaders;
 use invaders::player::Player;
 use invaders::render::render;
 use invaders::{exit_terminal, init_audio, init_terminal};
@@ -51,10 +52,12 @@ fn main() -> Result<(), Box<dyn Error>> {
       }
    });
 
-   // game loop
-   let mut player = Player::new();
+   // game models
+   let mut invaders = Invaders::new();
    let mut instant = Instant::now();
+   let mut player = Player::new();
 
+   // game loop
    'gameloop: loop {
       // per-frame init
       let delta = instant.elapsed();
@@ -81,11 +84,23 @@ fn main() -> Result<(), Box<dyn Error>> {
          }
       }
 
-      // updates
+      // updating timers
       player.update(delta);
 
+      if invaders.update(delta) {
+         audio.play("move");
+      }
+
       // draw & render
-      player.draw(&mut curr_frame);
+      // =====[ v1 of rendering our models ]=====
+      // invaders.draw(&mut curr_frame);
+      // player.draw(&mut curr_frame);
+      // =====[ v2 of rendering our models ]=====
+      let drawables: Vec<&dyn Drawable> = vec![&invaders, &player];
+
+      for drawable in drawables {
+         drawable.draw(&mut curr_frame);
+      }
       // the return value of this `.send` could be a `Result` or an `Error`
       // by storing it this way, we're effectively silently ignoring whatever happens
       let _ = render_tx.send(curr_frame);
