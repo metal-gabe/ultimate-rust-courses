@@ -42,7 +42,7 @@ pub struct Pumpkin {
 
 impl Pumpkin {
    /// If you smash a pumpkin, it will be gone.
-   /// Then it can't be used for pie. :'-(
+   /// Then it can't be used for pie. 😭
    pub fn smash(self) {}
 }
 
