@@ -22,7 +22,8 @@ pub struct Party {
 
 impl Default for Party {
    fn default() -> Self {
-      Party {
+      // you could use `Party` as the name here, but it's more idiomatic to use `Self`
+      Self {
          at_restaurant: true,
          cake: Cake::Chocolate,
          num_people: 8,
