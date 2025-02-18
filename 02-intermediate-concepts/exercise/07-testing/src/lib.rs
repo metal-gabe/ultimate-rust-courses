@@ -28,19 +28,13 @@ mod test {
 
    // 3. Write a test function that verifies the following condition using the `assert_eq!` or
    // `assert_ne!` macros
-   // - sploosh(1, 2, 3) returns 4
    #[test]
    fn test_sploosh() {
+      // - sploosh(1, 2, 3) returns 4
       assert_eq!(sploosh(1, 2, 3), 4);
-   }
-   // - sploosh(5, 6, 7) does not return 4
-   #[test]
-   fn test_sploosh2() {
+      // - sploosh(5, 6, 7) does not return 4
       assert_ne!(sploosh(5, 6, 7), 4);
-   }
-   // - If you pass sploosh a negative number for the first argument, 99 is returned
-   #[test]
-   fn test_sploosh3() {
+      // - If you pass sploosh a negative number for the first argument, 99 is returned
       assert_eq!(sploosh(-1, 2, 3), 99);
    }
    //
@@ -48,19 +42,13 @@ mod test {
    // Hint: Don't forget the `#[test]` attribute for your test function!
 
    // 4. Write a test function that verifies the following conditions using the `assert!` macro
-   // - splish(100, 10) is negative
    #[test]
    fn test_splish() {
+      // - splish(100, 10) is negative
       assert!(splish(100, 10) < 0);
-   }
-   // - splish(40, 20) is positive
-   #[test]
-   fn test_splish2() {
+      // - splish(40, 20) is positive
       assert!(splish(40, 20) > 0);
-   }
-   // - splish(9, 3) is 0
-   #[test]
-   fn test_splish3() {
+      // - splish(9, 3) is 0
       assert_eq!(splish(9, 3), 0);
    }
 }
