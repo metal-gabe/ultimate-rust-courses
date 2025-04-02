@@ -23,7 +23,7 @@ fn main() {
    // the code and see the output from the child thread's expensive sum in the middle of the main
    // thread's processing of letters.
    //
-   let handle = thread::spawn(|| expensive_sum(my_vector));
+   let handle = thread::spawn(move || expensive_sum(my_vector));
 
    // While the child thread is running, the main thread will also do some work
    for letter in vec!["a", "b", "c", "d", "e", "f"] {
