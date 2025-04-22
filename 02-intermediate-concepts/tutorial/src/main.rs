@@ -3,7 +3,7 @@ use rusty_engine::prelude::*;
 #[derive(Resource)]
 struct GameState {
    current_score: u32,
-   enemy_labels: Vec<String>,
+   enemy_index: i32,
    high_score: u32,
    spawn_timer: Timer,
 }
@@ -12,7 +12,7 @@ impl Default for GameState {
    fn default() -> Self {
       Self {
          current_score: 0,
-         enemy_labels: Vec::new(),
+         enemy_index: 0,
          high_score: 0,
          spawn_timer: Timer::from_seconds(1.0, TimerMode::Repeating),
       }
@@ -28,12 +28,6 @@ fn main() {
    player.scale = 0.5;
    player.collision = true;
 
-   let car1 = game.add_sprite("car1", SpritePreset::RacingCarBlue);
-   car1.translation = Vec2::new(300.0, 100.0);
-   // car1.rotation = std::f32::consts::FRAC_PI_2;
-   car1.scale = 0.5;
-   car1.collision = true;
-
    let initial_state = GameState::default();
    game.add_logic(game_logic);
    game.run(initial_state);
@@ -41,7 +35,7 @@ fn main() {
 
 fn game_logic(
    engine: &mut Engine,
-   state: &mut GameState,
+   game_state: &mut GameState,
 ) {
    for event in engine.collision_events.drain(..) {
       if event.state == CollisionState::Begin && event.pair.one_starts_with("player") {
@@ -52,14 +46,14 @@ fn game_logic(
             }
          }
 
-         state.current_score += 1;
-         println!("Score: {}", state.current_score);
+         game_state.current_score += 1;
+         println!("Score: {}", game_state.current_score);
       }
    }
 
    let player = engine.sprites.get_mut("player").unwrap();
 
-   // player movement
+   // handle player movement
    const MOVEMENT_SPEED: f32 = 100.0;
 
    if engine.keyboard_state.pressed_any(&[KeyCode::Up, KeyCode::W]) {
@@ -76,5 +70,16 @@ fn game_logic(
 
    if engine.keyboard_state.pressed_any(&[KeyCode::Right, KeyCode::D]) {
       player.translation.x += MOVEMENT_SPEED * engine.delta_f32;
+   }
+
+   // handle mouse input to spawn enemies
+   if engine.mouse_state.just_pressed(MouseButton::Left) {
+      if let Some(mouse_location) = engine.mouse_state.location() {
+         let label = format!("enemy{}", game_state.enemy_index);
+         game_state.enemy_index += 1;
+         let enemy = engine.add_sprite(label.clone(), SpritePreset::RacingCarBlue);
+         enemy.translation = mouse_location;
+         enemy.collision = true;
+      }
    }
 }
