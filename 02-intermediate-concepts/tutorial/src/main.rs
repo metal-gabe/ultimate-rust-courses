@@ -22,6 +22,8 @@ impl Default for GameState {
 fn main() {
    let mut game = Game::new();
 
+   game.audio_manager.play_music(MusicPreset::Classy8Bit, 1.0);
+
    let player = game.add_sprite("player", SpritePreset::RacingCarRed);
    player.translation = Vec2::new(100.0, 100.0);
    player.rotation = std::f32::consts::FRAC_PI_2;
@@ -61,6 +63,8 @@ fn game_logic(
             let high_score = engine.texts.get_mut("high_score").unwrap();
             high_score.value = format!("High Score: {}", game_state.high_score);
          }
+
+         engine.audio_manager.play_sfx(SfxPreset::Minimize1, 1.0);
       }
    }
 
