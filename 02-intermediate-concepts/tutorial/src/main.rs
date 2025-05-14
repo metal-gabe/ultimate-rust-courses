@@ -2,18 +2,18 @@ use rusty_engine::prelude::*;
 
 #[derive(Resource)]
 struct GameState {
-   current_score: u32,
    enemy_index: i32,
    high_score: u32,
+   score: u32,
    spawn_timer: Timer,
 }
 
 impl Default for GameState {
    fn default() -> Self {
       Self {
-         current_score: 0,
          enemy_index: 0,
          high_score: 0,
+         score: 0,
          spawn_timer: Timer::from_seconds(1.0, TimerMode::Repeating),
       }
    }
@@ -27,6 +27,11 @@ fn main() {
    player.rotation = std::f32::consts::FRAC_PI_2;
    player.scale = 0.5;
    player.collision = true;
+
+   let score_text = game.add_text("score", "Score: 0");
+   score_text.translation = Vec2::new(520.0, 320.0);
+   let high_score_text = game.add_text("high_score", "High Score: 0");
+   high_score_text.translation = Vec2::new(-520.0, 320.0);
 
    let initial_state = GameState::default();
    game.add_logic(game_logic);
@@ -46,8 +51,16 @@ fn game_logic(
             }
          }
 
-         game_state.current_score += 1;
-         println!("Score: {}", game_state.current_score);
+         game_state.score += 1;
+
+         let score = engine.texts.get_mut("score").unwrap();
+         score.value = format!("Score: {}", game_state.score);
+
+         if game_state.score > game_state.high_score {
+            game_state.high_score = game_state.score;
+            let high_score = engine.texts.get_mut("high_score").unwrap();
+            high_score.value = format!("High Score: {}", game_state.high_score);
+         }
       }
    }
 
@@ -81,5 +94,12 @@ fn game_logic(
          enemy.translation = mouse_location;
          enemy.collision = true;
       }
+   }
+
+   // reset score
+   if engine.keyboard_state.just_pressed(KeyCode::R) {
+      game_state.score = 0;
+      let score = engine.texts.get_mut("score").unwrap();
+      score.value = "Score: 0".to_string();
    }
 }
