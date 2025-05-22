@@ -51,7 +51,7 @@ fn game_logic(
    }
 
    // hover the score text up & down based on time since the game started
-   let offset = (engine.time_since_startup_f64.cos() * 10.0) as f32;
+   let offset = ((engine.time_since_startup_f64 * 3.0).cos() * 5.0) as f32;
    // keep the score texts near the edges of the screen
    let score = engine.texts.get_mut("score").unwrap();
    score.translation.x = engine.window_dimensions.x / 2.0 - 80.0;
