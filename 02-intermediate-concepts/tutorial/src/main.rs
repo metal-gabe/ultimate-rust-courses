@@ -50,13 +50,15 @@ fn game_logic(
       engine.should_exit = true;
    }
 
+   // hover the score text up & down based on time since the game started
+   let offset = (engine.time_since_startup_f64.cos() * 10.0) as f32;
    // keep the score texts near the edges of the screen
    let score = engine.texts.get_mut("score").unwrap();
    score.translation.x = engine.window_dimensions.x / 2.0 - 80.0;
-   score.translation.y = engine.window_dimensions.y / 2.0 - 30.0;
+   score.translation.y = engine.window_dimensions.y / 2.0 - 30.0 + offset;
    let high_score = engine.texts.get_mut("high_score").unwrap();
    high_score.translation.x = -engine.window_dimensions.x / 2.0 + 110.0;
-   high_score.translation.y = engine.window_dimensions.y / 2.0 - 30.0;
+   high_score.translation.y = engine.window_dimensions.y / 2.0 - 30.0 + offset;
 
    for event in engine.collision_events.drain(..) {
       if event.state == CollisionState::Begin && event.pair.one_starts_with("player") {
