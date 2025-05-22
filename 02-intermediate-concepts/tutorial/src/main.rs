@@ -23,7 +23,14 @@ impl Default for GameState {
 fn main() {
    let mut game = Game::new();
 
-   game.audio_manager.play_music(MusicPreset::Classy8Bit, 1.0);
+   game.window_settings(Window {
+      resizable: false,
+      resolution: WindowResolution::new(800.0, 600.0),
+      title: "Rusty Engine Tutorial".to_string(),
+      ..Default::default()
+   });
+
+   game.audio_manager.play_music(MusicPreset::Classy8Bit, 0.1);
 
    let player = game.add_sprite("player", SpritePreset::RacingCarRed);
    player.translation = Vec2::new(100.0, 100.0);
@@ -80,7 +87,7 @@ fn game_logic(
             high_score.value = format!("High Score: {}", game_state.high_score);
          }
 
-         engine.audio_manager.play_sfx(SfxPreset::Minimize1, 1.0);
+         engine.audio_manager.play_sfx(SfxPreset::Minimize1, 0.25);
       }
    }
 
