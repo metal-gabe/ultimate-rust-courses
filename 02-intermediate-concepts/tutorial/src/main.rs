@@ -1,4 +1,4 @@
-use rand::prelude::*;
+use rand::Rng;
 use rusty_engine::prelude::*;
 
 #[derive(Resource)]
@@ -45,6 +45,19 @@ fn game_logic(
    engine: &mut Engine,
    game_state: &mut GameState,
 ) {
+   // quit if `q` is pressed
+   if engine.keyboard_state.just_pressed(KeyCode::Q) {
+      engine.should_exit = true;
+   }
+
+   // keep the score texts near the edges of the screen
+   let score = engine.texts.get_mut("score").unwrap();
+   score.translation.x = engine.window_dimensions.x / 2.0 - 80.0;
+   score.translation.y = engine.window_dimensions.y / 2.0 - 30.0;
+   let high_score = engine.texts.get_mut("high_score").unwrap();
+   high_score.translation.x = -engine.window_dimensions.x / 2.0 + 110.0;
+   high_score.translation.y = engine.window_dimensions.y / 2.0 - 30.0;
+
    for event in engine.collision_events.drain(..) {
       if event.state == CollisionState::Begin && event.pair.one_starts_with("player") {
          // remove the sprite the player collided with
@@ -103,10 +116,11 @@ fn game_logic(
 
    if game_state.spawn_timer.tick(engine.delta).just_finished() {
       let label = format!("enemy{}", game_state.enemy_index);
+      let mut rng = rand::rng();
       game_state.enemy_index += 1;
       let enemy = engine.add_sprite(label.clone(), SpritePreset::RacingCarBlue);
-      enemy.translation.x = thread_rng().gen_range(-550.0..550.0);
-      enemy.translation.y = thread_rng().gen_range(-325.0..325.0);
+      enemy.translation.x = rng.random_range(-550.0..550.0);
+      enemy.translation.y = rng.random_range(-325.0..325.0);
       enemy.collision = true;
    }
 
